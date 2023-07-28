@@ -1,17 +1,17 @@
 /*
  * jet - Just Edit Text
  * Copyright (C) 2023 Nicolò Santamaria
-
+ *
  * Jet is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * Jet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -198,6 +198,12 @@ Options:
     -a           Includes hidden files (starting with a dot).
     -l int       Max depth in a directory tree.
     -h           Prints this help message and exits.
+
+Jet Copyright (C) 2023  Nicolò Santamaria
+This program comes with ABSOLUTELY NO WARRANTY; for details refer to
+https://www.gnu.org/licenses/gpl-3.0.html.
+This is free software, and you are welcome to change and redistribute it
+under the conditions defined by the license.
 `,
 		os.Args[0],
 	)

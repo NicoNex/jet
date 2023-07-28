@@ -1,32 +1,35 @@
 [![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/jet)](https://goreportcard.com/report/github.com/NicoNex/jet) [![License](http://img.shields.io/badge/license-GPL3.0-orange.svg?style=flat)](https://github.com/NicoNex/re/blob/master/LICENSE)
 
-# jet
-Just Edit Text
+# jet - Just Edit Text
+Jet is an intuitive and fast command-line tool for find & replace operations.
 
-Jet is an intuitive and fast find & replace cli.
-Jet replaces all matches of a specified regex with the provided replacement text.
-It can be run over single files or entire directories specified in the command line argument.
-When jet encounters a directory it recursively finds and replaces text in all the files in the directory tree.
+## Installation
+You can install Jet using Go's package manager:
+```bash
+go install github.com/NicoNex/jet@latest
+```
 
-Install it with `go install github.com/NicoNex/jet@latest`.
-Run `jet -h` for more options.
+Alternatively you can clone this repo and use the provided install.sh script that will install Jet alongside its man page for easy access:
+```bash
+./install.sh
+```
 
 ## Usage
-```
-jet - Just Edit Text
-Jet allows you to replace all the substrings matched by a specified regex in
-one or more files.
-If it is given a directory as input, it will recursively replace all the
-matches in the files of the directory tree.
+Jet allows you to replace all occurrences of a specified regex pattern in one or more files. It supports both single files and entire directories specified as input.
 
-Usage:
-    jet [options] "pattern" "replacement" input-files
+If you provide Jet with a directory as input, it will recursively find and replace text in all files within the directory tree.
 
-Options:
-    -p           Print to stdout instead of writing each file.
-    -v           Verbose, explain what is being done.
-    -g string    Add a glob the file names must match to be edited.
-    -a           Includes hidden files (starting with a dot).
-    -l int       Max depth in a directory tree.
-    -h           Prints this help message and exits.
+You can also use `-` as the filename to read from stdin and write to stdout.
+
+## Command
+```bash
+jet [options] "pattern" "replacement" input-files
 ```
+
+### Options
+- `-p`: Print the output to stdout instead of writing each file.
+- `-v`: Enable verbose mode to explain the actions being performed.
+- `-g string`: Add a glob pattern that file names must match to be edited.
+- `-a`: Include hidden files (those starting with a dot).
+- `-l int`: Set the maximum depth for directory tree processing. (Default: -1 for unlimited)
+- `-h`: Display the help message and exit.

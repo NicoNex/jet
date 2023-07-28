@@ -1,0 +1,42 @@
+.\" Manpage for jet.
+.\" Contact nicolo.santamaria@proton.me for bug reports.
+.TH jet 1 "28-07-2023" "jet man page"
+
+.SH NAME
+jet \- Just Edit Text.
+
+.SH SYNOPSIS
+.B jet [OPTIONS] "pattern" "replacement" filename
+
+.SH DESCRIPTION
+Jet \- Just Edit Text.
+.P
+Jet is a fast and intuitive find & replace cli.
+.P
+Jet replaces all matches of a specified regex with the provided replacement text.
+.P
+It can be run over single files or entire directories specified in the command line argument.
+.P
+When jet encounters a directory it descends in the directory tree and recursively finds and replaces matches in all the files.
+
+.SH OPTIONS
+.B "-p"
+    Print to stdout instead of writing each file.
+
+.B "-v"
+    Verbose, explain what is being done.
+
+.B "-g"
+    Add a glob the file names must match to be edited.
+
+.B "-a"
+    Includes hidden files (starting with a dot).
+
+.B "-l"
+    Max depth in a directory tree (default -1).
+
+.B "-h"
+    Prints the help message.
+
+.SH AUTHOR
+Nicolò Santamaria <nicolo.santamaria@gmail.com>

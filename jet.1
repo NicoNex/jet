@@ -1,42 +1,40 @@
 .\" Manpage for jet.
-.\" Contact nicolo.santamaria@proton.me for bug reports.
+.\" For bug reports, contact nicolo.santamaria@proton.me.
 .TH jet 1 "28-07-2023" "jet man page"
 
 .SH NAME
-jet \- Just Edit Text.
+jet \- Just Edit Text
 
 .SH SYNOPSIS
 .B jet [OPTIONS] "pattern" "replacement" filename
 
 .SH DESCRIPTION
-Jet \- Just Edit Text.
+Jet is a fast and intuitive command-line tool for find and replace operations.
 .P
-Jet is a fast and intuitive find & replace cli.
+It replaces all occurrences of the specified regular expression pattern with the provided replacement text.
 .P
-Jet replaces all matches of a specified regex with the provided replacement text.
+Jet can process single files or entire directories specified in the command line.
 .P
-It can be run over single files or entire directories specified in the command line argument.
-.P
-When jet encounters a directory it descends in the directory tree and recursively finds and replaces matches in all the files.
+When given a directory, jet descends into the directory tree and recursively finds and replaces matches in all files.
 
 .SH OPTIONS
 .B "-p"
-    Print to stdout instead of writing each file.
+    Print the output to stdout instead of writing each file.
 
 .B "-v"
-    Verbose, explain what is being done.
+    Enable verbose mode to explain the actions being performed.
 
 .B "-g"
-    Add a glob the file names must match to be edited.
+    Add a glob pattern that file names must match to be edited.
 
 .B "-a"
-    Includes hidden files (starting with a dot).
+    Include hidden files (those starting with a dot).
 
 .B "-l"
-    Max depth in a directory tree (default -1).
+    Set the maximum depth for directory tree processing (default -1 for unlimited).
 
 .B "-h"
-    Prints the help message.
+    Display the help message.
 
 .SH AUTHOR
-Nicolò Santamaria <nicolo.santamaria@gmail.com>
+Written by Nicolò Santamaria <nicolo.santamaria@gmail.com>.

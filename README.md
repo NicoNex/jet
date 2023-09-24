@@ -9,6 +9,17 @@ You can install Jet using Go's package manager:
 go install github.com/NicoNex/jet@latest
 ```
 
+If you use [ArchLinux](https://archlinux.org/) you can install jet with [yay](https://github.com/Jguer/yay), [paru](https://github.com/morganamilo/paru) or any alternative AUR helper:
+```bash
+yay -S jet-edit
+```
+If you don't have an AUR helper installed:
+```bash
+git clone https://aur.archlinux.org/jet-edit.git
+cd jet-edit
+makepkg -si
+```
+
 Alternatively you can clone this repo and use the provided install.sh script that will install Jet alongside its man page for easy access:
 ```bash
 ./install.sh

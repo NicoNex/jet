@@ -1,12 +1,14 @@
 .\" Manpage for jet.
 .\" For bug reports, contact nicolo.santamaria@proton.me.
-.TH jet 1 "28-07-2023" "jet man page"
+.TH jet 1 "2023-10-18" "jet man page"
 
 .SH NAME
 jet \- Just Edit Text
 
 .SH SYNOPSIS
-.B jet [OPTIONS] "pattern" "replacement" filename
+.B jet [OPTIONS] "pattern" "replacement" input-files...
+.br
+.B jet [OPTIONS] -e "pattern1" "replacement1" -e "pattern2" "replacement2" input-files...
 
 .SH DESCRIPTION
 Jet is a fast and intuitive command-line tool for find and replace operations.
@@ -24,17 +26,48 @@ When given a directory, jet descends into the directory tree and recursively fin
 .B "-v"
     Enable verbose mode to explain the actions being performed.
 
-.B "-g"
+.B "-g string"
     Add a glob pattern that file names must match to be edited.
 
 .B "-a"
     Include hidden files (those starting with a dot).
 
-.B "-l"
+.B "-l int"
     Set the maximum depth for directory tree processing (default -1 for unlimited).
 
-.B "-h"
-    Display the help message.
+.B "-e string"
+    Specify two arguments per flag usage. Repeatable for multiple replacements.
+    Each \-e flag requires a pair of values for replacement.
+.P
+    When using the \-e flag multiple times, the pattern-replacement pairs are executed in the same order they are specified, one by one.
+
+.B "-h, --help"
+    Display this help message and exit.
+
+.SH EXAMPLES
+.B jet "foo" "bar" my/path1 my/path2
+.br
+    Replace all occurrences of "foo" with "bar" in the files under my/path1 and my/path2.
+.P
+.B jet -e "foo" "bar" -e "baz" "qux" my/path1 my/path2
+.br
+    Replace all occurrences of "foo" with "bar" and "baz" with "qux" in the files under my/path1 and my/path2.
+.P
+.B jet -p -v "foo" "bar" my/path1
+.br
+    Replace "foo" with "bar" in my/path1 and print the results to stdout with verbose output.
+.P
+.B jet -e "foo" "bar" -e "baz" "qux" -g "*.txt" -a my/path1
+.br
+    Replace "foo" with "bar" and "baz" with "qux" in all text files, including hidden files, under my/path1.
+
+.SH NOTICE
+When using the \-e flag multiple times, the pattern-replacement pairs are executed in the same order they are specified, one by one.
+
+.SH COPYRIGHT
+Jet Copyright (C) 2023  Nicolò Santamaria
+This program comes with ABSOLUTELY NO WARRANTY; for details refer to https://www.gnu.org/licenses/gpl-3.0.html.
+This is free software, and you are welcome to change and redistribute it under the conditions defined by the license.
 
 .SH AUTHOR
 Written by Nicolò Santamaria <nicolo.santamaria@proton.me>.

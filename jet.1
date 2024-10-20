@@ -6,63 +6,80 @@
 jet \- Just Edit Text
 
 .SH SYNOPSIS
-.B jet [OPTIONS] "pattern" "replacement" input-files...
+.B jet [OPTIONS] pattern replacement input-files...
 .br
-.B jet [OPTIONS] -e "pattern1" "replacement1" -e "pattern2" "replacement2" input-files...
+.B jet [OPTIONS] -e pattern1 replacement1 -e pattern2 replacement2 input-files...
 
 .SH DESCRIPTION
 Jet is a fast and intuitive command-line tool for find and replace operations.
 .P
-It replaces all occurrences of the specified regular expression pattern with the provided replacement text.
+It replaces all occurrences of the specified regular expression patterns with the provided replacement text.
 .P
-Jet can process single files or entire directories specified in the command line.
+Jet can process single files or entire directories specified on the command line.
 .P
-When given a directory, jet descends into the directory tree and recursively finds and replaces matches in all files.
+When given a directory, Jet descends into the directory tree and recursively finds and replaces matches in all files.
 
 .SH OPTIONS
-.B "-p"
-    Print the output to stdout instead of writing each file.
+.TP
+.B \-p
+Print to stdout instead of modifying files.
 
-.B "-v"
-    Enable verbose mode to explain the actions being performed.
+.TP
+.B \-v
+Enable verbose mode; explain what is being done.
 
-.B "-g string"
-    Add a glob pattern that file names must match to be edited.
+.TP
+.B \-g \fIglob-pattern\fR
+Only process files matching the given glob pattern.
 
-.B "-a"
-    Include hidden files (those starting with a dot).
+.TP
+.B \-a
+Include hidden files (those starting with a dot).
 
-.B "-l int"
-    Set the maximum depth for directory tree processing (default -1 for unlimited).
+.TP
+.B \-l \fIint\fR
+Maximum depth for directory traversal.
 
-.B "-e string"
-    Specify two arguments per flag usage. Repeatable for multiple replacements.
-    Each \-e flag requires a pair of values for replacement.
-.P
-    When using the \-e flag multiple times, the pattern-replacement pairs are executed in the same order they are specified, one by one.
+.TP
+.B \-r\fR, \fB\-\-replace\-names
+Replace matches in file and directory names.
 
-.B "-h, --help"
-    Display this help message and exit.
+.TP
+.B \-n\fR, \fB\-\-names\-only
+Only replace matching names, ignoring file contents.
 
-.SH EXAMPLES
-.B jet "foo" "bar" my/path1 my/path2
-.br
-    Replace all occurrences of "foo" with "bar" in the files under my/path1 and my/path2.
-.P
-.B jet -e "foo" "bar" -e "baz" "qux" my/path1 my/path2
-.br
-    Replace all occurrences of "foo" with "bar" and "baz" with "qux" in the files under my/path1 and my/path2.
-.P
-.B jet -p -v "foo" "bar" my/path1
-.br
-    Replace "foo" with "bar" in my/path1 and print the results to stdout with verbose output.
-.P
-.B jet -e "foo" "bar" -e "baz" "qux" -g "*.txt" -a my/path1
-.br
-    Replace "foo" with "bar" and "baz" with "qux" in all text files, including hidden files, under my/path1.
+.TP
+.B \-e \fIpattern replacement\fR
+Specify a regular expression pattern and replacement.
+Can be used multiple times for multiple replacements.
+
+.TP
+.B \-h\fR, \fB\-\-help
+Prints this help message and exits.
 
 .SH NOTICE
 When using the \-e flag multiple times, the pattern-replacement pairs are executed in the same order they are specified, one by one.
+
+.SH EXAMPLES
+.TP
+.B jet "foo" "bar" my/path1 my/path2
+Replace all occurrences of "foo" with "bar" in the files under \fImy/path1\fR and \fImy/path2\fR.
+
+.TP
+.B jet \-e "foo" "bar" \-e "baz" "qux" my/path1 my/path2
+Replace all occurrences of "foo" with "bar" and "baz" with "qux" in the files under \fImy/path1\fR and \fImy/path2\fR.
+
+.TP
+.B jet \-p \-v "foo" "bar" my/path1
+Replace "foo" with "bar" in \fImy/path1\fR and print the results to stdout with verbose output.
+
+.TP
+.B jet \-n "foo" "bar" my/path1
+Rename files and directories by replacing "foo" with "bar" in their names under \fImy/path1\fR, without modifying file contents.
+
+.TP
+.B jet \-e "foo" "bar" \-e "baz" "qux" \-g "*.txt" \-a my/path1
+Replace "foo" with "bar" and "baz" with "qux" in all text files, including hidden files, under \fImy/path1\fR.
 
 .SH COPYRIGHT
 Jet Copyright (C) 2023  Nicolò Santamaria

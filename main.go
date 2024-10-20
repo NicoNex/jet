@@ -174,8 +174,28 @@ func (w *walker) editFilename(path string) string {
 	return newpath
 }
 
-func isHidden(p string) bool {
-	return p[0] == '.'
+func isHidden(path string) bool {
+    path = filepath.Clean(path)
+
+    if path == "." || path == ".." {
+        return false
+    }
+
+    for {
+        base := filepath.Base(path)
+        if base != "." && base != ".." && strings.HasPrefix(base, ".") {
+            return true
+        }
+
+        // Move up one level in the path
+        parent := filepath.Dir(path)
+        if parent == path {
+        	// Reached the root directory
+            break
+        }
+        path = parent
+    }
+    return false
 }
 
 func (w *walker) processFile(path string, d fs.DirEntry, err error) error {
@@ -190,6 +210,9 @@ func (w *walker) processFile(path string, d fs.DirEntry, err error) error {
 	}
 	// Skip hidden files if not specified otherwise.
 	if isHidden(d.Name()) && !w.IncludeHidden {
+		if d.IsDir() {
+            return fs.SkipDir
+        }
 		return nil
 	}
 

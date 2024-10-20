@@ -92,13 +92,13 @@ func (p pairset) replaceAll(src []byte) []byte {
 
 type walker struct {
 	ToStdout      bool
-	Replacement   string
 	Glob          string
 	IsVerbose     bool
 	MaxDepth      int
 	IncludeHidden bool
+	ReplaceNames  bool
+	NamesOnly     bool
 	pairs         pairset
-	// *regexp.Regexp
 	*sync.WaitGroup
 }
 
@@ -111,8 +111,6 @@ func (w *walker) matchGlob(path string) bool {
 }
 
 func (w *walker) edit(path string) {
-	defer w.Done()
-
 	b, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Println(err)
@@ -121,25 +119,26 @@ func (w *walker) edit(path string) {
 
 	if w.ToStdout {
 		fmt.Print(string(w.pairs.replaceAll(b)))
-	} else if w.pairs.match(b) {
-		if w.IsVerbose {
-			fmt.Printf("writing %s\n", path)
-		}
+		return
+	}
 
-		info, err := os.Stat(path)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+	if w.IsVerbose {
+		fmt.Printf("writing %s\n", path)
+	}
 
-		err = os.WriteFile(
-			path,
-			w.pairs.replaceAll(b),
-			info.Mode().Perm(),
-		)
-		if err != nil {
-			fmt.Println(err)
-		}
+	info, err := os.Stat(path)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = os.WriteFile(
+		path,
+		w.pairs.replaceAll(b),
+		info.Mode().Perm(),
+	)
+	if err != nil {
+		fmt.Println(err)
 	}
 }
 
@@ -150,6 +149,29 @@ func (w *walker) editStdin() {
 		return
 	}
 	fmt.Print(string(w.pairs.replaceAll(b)))
+}
+
+func (w *walker) editFilename(path string) string {
+	var (
+		base    = filepath.Base(path)
+		newbase = string(w.pairs.replaceAll([]byte(base)))
+		newpath = filepath.Join(filepath.Dir(path), newbase)
+	)
+
+	// Return early if there are no changes in the name.
+	if newbase == base {
+		return path
+	}
+
+	if w.IsVerbose {
+		fmt.Printf("renaming %s to %s", path, newpath)
+	}
+
+	if err := os.Rename(path, newpath); err != nil {
+		fmt.Println(err)
+		return path
+	}
+	return newpath
 }
 
 func isHidden(p string) bool {
@@ -170,9 +192,19 @@ func (w *walker) processFile(path string, d fs.DirEntry, err error) error {
 	if isHidden(d.Name()) && !w.IncludeHidden {
 		return nil
 	}
-	if !d.IsDir() && w.matchGlob(path) {
+
+	if w.matchGlob(path) {
 		w.Add(1)
-		go w.edit(path)
+		go func() {
+			defer w.Done()
+
+			if w.NamesOnly || w.ReplaceNames {
+				path = w.editFilename(path)
+			}
+			if !d.IsDir() && !w.NamesOnly && w.matchGlob(path) {
+				w.edit(path)
+			}
+		}()
 	}
 
 	return nil
@@ -217,17 +249,26 @@ func parseFlags() (w walker, files []string) {
 	flag.StringVar(&w.Glob, "g", "*", "Add a pattern the file names must match to be edited.")
 	flag.BoolVar(&w.IncludeHidden, "a", false, "Includes hidden files (starting with a dot).")
 	flag.IntVar(&w.MaxDepth, "l", -1, "Max depth.")
+	flag.BoolVar(&w.ReplaceNames, "r", false, "Replace matches in file and directory names.")
+	flag.BoolVar(&w.ReplaceNames, "replace-names", false, "Replace matches in file and directory names.")
+	flag.BoolVar(&w.NamesOnly, "n", false, "Only replace matches in names, ignoring file contents.")
+	flag.BoolVar(&w.NamesOnly, "names-only", false, "Only replace matches in names, ignoring file contents.")
 	flag.Var(&w.pairs, "e", "Specify two arguments per flag usage for executing a replacement operation.")
 	flag.Parse()
 
 	w.WaitGroup = new(sync.WaitGroup)
 
-	// Exit early if the pairs are set in the flags and no path is provided.
+	// Exit early if the pairs are set in the flags but no path is provided.
 	if w.pairs != nil && flag.NArg() < 1 {
 		flag.Usage()
 		os.Exit(1)
 	}
 
+	// If no pair is provided using the -e flags:
+	//   - Expect the pattern and replacement in the first two command-line arguments.
+	//   - Process file paths starting from index 2.
+	// Otherwise:
+	//   - Process file paths starting from index 0.
 	if w.pairs == nil {
 		if flag.NArg() < 3 {
 			flag.Usage()
@@ -262,46 +303,47 @@ func parseFlags() (w walker, files []string) {
 func usage() {
 	fmt.Printf(
 		`jet - Just Edit Text
-Jet allows you to replace all the substrings matched by a specified regex in
-one or more files.
-If it is given a directory as input, it will recursively replace all the
-matches in the files of the directory tree.
+Jet allows you to replace all the substrings matched by specified regular
+expressions in one or more files.
+If it is given a directory as input, it will recursively replace all matches
+in the files of the directory tree.
 
 Usage:
-    %s [options] "pattern" "replacement" input-files...
-    %s [options] -e "pattern1" "replacement1" -e "pattern2" "replacement2" input-files...
+  %s [options] pattern replacement input-files...
+  %s [options] -e pattern1 replacement1 -e pattern2 replacement2 input-files...
 
 Options:
-    -p          Print to stdout instead of writing each file.
-    -v          Verbose, explain what is being done.
-    -g string   Add a glob the file names must match to be edited.
-    -a          Includes hidden files (starting with a dot).
-    -l int      Max depth in a directory tree.
-    -e string   Specify two arguments per flag usage.
-                Repeatable for multiple replacements.
-                Each -e flag requires a pair of values for replacement.
-    -h, --help  this help message and exits.
+  -p                       Print to stdout instead of modifying files.
+  -v                       Enable verbose mode; explain what is being done.
+  -g string                Only process files matching the given glob pattern.
+  -a                       Includes hidden files (those starting with a dot).
+  -l int                   Maximum depth for directory traversal.
+  -r, --replace-names      Replace matches in file and directory names.
+  -n, --names-only         Only replace matching names, ignoring file contents.
+  -e pattern replacement   Specify a regular expression pattern and replacement.
+                           Can be used multiple times for multiple replacements.
+  -h, --help               Prints this help message and exits.
 
 Notice:
-    When using the -e flag multiple times, the pattern-replacement pairs are
-    executed in the same order they are specified, one by one.
+  When using the -e flag multiple times, the pattern-replacement pairs are
+  executed in the same order they are specified, one by one.
 
 Examples:
-    jet "foo" "bar" my/path1 my/path2
-        Replace all occurrences of "foo" with "bar" in the files under my/path1
-        and my/path2.
+  %s "foo" "bar" my/path1 my/path2
+    Replace all occurrences of "foo" with "bar" in the files under my/path1
+    and my/path2.
 
-    jet -e "foo" "bar" -e "baz" "qux" my/path1 my/path2
-        Replace all occurrences of "foo" with "bar" and "baz" with "qux" in the
-        files under my/path1 and my/path2.
+  %s -e "foo" "bar" -e "baz" "qux" my/path1 my/path2
+    Replace all occurrences of "foo" with "bar" and "baz" with "qux" in the
+    files under my/path1 and my/path2.
 
-    jet -p -v "foo" "bar" my/path1
-        Replace "foo" with "bar" in my/path1 and print the results to stdout
-        with verbose output.
+  %s -p -v "foo" "bar" my/path1
+    Replace "foo" with "bar" in my/path1 and print the results to stdout
+    with verbose output.
 
-    jet -e "foo" "bar" -e "baz" "qux" -g "*.txt" -a my/path1
-        Replace "foo" with "bar" and "baz" with "qux" in all text files,
-        including hidden files, under my/path1.
+  %s -e "foo" "bar" -e "baz" "qux" -g "*.txt" -a my/path1
+    Replace "foo" with "bar" and "baz" with "qux" in all text files,
+    including hidden files, under my/path1.
 
 Jet Copyright (C) 2023  Nicolò Santamaria
 This program comes with ABSOLUTELY NO WARRANTY; for details refer to
@@ -309,6 +351,10 @@ https://www.gnu.org/licenses/gpl-3.0.html.
 This is free software, and you are welcome to change and redistribute it
 under the conditions defined by the license.
 `,
+		os.Args[0],
+		os.Args[0],
+		os.Args[0],
+		os.Args[0],
 		os.Args[0],
 		os.Args[0],
 	)

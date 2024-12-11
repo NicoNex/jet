@@ -1,9 +1,9 @@
-[![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/jet)](https://goreportcard.com/report/github.com/NicoNex/jet) [![License](http://img.shields.io/badge/license-GPL3.0-green.svg?style=flat)](https://github.com/NicoNex/jet/blob/master/LICENSE)
+[![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/jet)](https://goreportcard.com/report/github.com/NicoNex/jet) [![codecov](https://codecov.io/github/NicoNex/jet/graph/badge.svg?token=ES6YQSJOVR)](https://codecov.io/github/NicoNex/jet) [![License](http://img.shields.io/badge/license-GPL3.0-green.svg?style=flat)](https://github.com/NicoNex/jet/blob/master/LICENSE)
 
 # jet - Just Edit Text
-Jet is an intuitive and fast command-line tool for find & replace operations using regular expressions.  
-Jet allows you to replace all substrings matched by specified regular expressions in one or more files and directories.  
-It can process single files or entire directories specified as input.  
+Jet is an intuitive and fast command-line tool for find & replace operations using regular expressions.
+Jet allows you to replace all substrings matched by specified regular expressions in one or more files and directories.
+It can process single files or entire directories specified as input.
 When given a directory, Jet recursively finds and replaces matches in all files and directory names.
 
 ## Installation
@@ -29,7 +29,7 @@ Alternatively you can clone this repo and use the provided install.sh script tha
 ```
 
 ## Usage
-Jet allows you to replace all substrings matched by specified regular expressions in one or more files and directories.  
+Jet allows you to replace all substrings matched by specified regular expressions in one or more files and directories.
 It supports both single files and entire directories specified as input.
 
 If you provide Jet with a directory as input, it will recursively find and replace text in all files within the directory tree optionally replacing the file or directory names as well.

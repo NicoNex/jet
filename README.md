@@ -1,4 +1,4 @@
-[![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/jet)](https://goreportcard.com/report/github.com/NicoNex/jet) [![codecov](https://codecov.io/github/NicoNex/jet/graph/badge.svg?token=ES6YQSJOVR)](https://codecov.io/github/NicoNex/jet) [![License](http://img.shields.io/badge/license-GPL3.0-green.svg?style=flat)](https://github.com/NicoNex/jet/blob/master/LICENSE)
+[![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/jet)](https://goreportcard.com/report/github.com/NicoNex/jet) [![codecov](https://codecov.io/github/NicoNex/jet/graph/badge.svg?token=ES6YQSJOVR)](https://codecov.io/github/NicoNex/jet) [![License](http://img.shields.io/badge/license-GPL3.0-green.svg?style=flat)](https://github.com/NicoNex/jet/blob/master/LICENSE) [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 
 # jet - Just Edit Text
 Jet is an intuitive and fast command-line tool for find & replace operations using regular expressions.

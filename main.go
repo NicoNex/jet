@@ -164,7 +164,7 @@ func (w *walker) editFilename(path string) string {
 	}
 
 	if w.IsVerbose {
-		fmt.Printf("renaming %s to %s", path, newpath)
+		fmt.Printf("renaming %s to %s\n", path, newpath)
 	}
 
 	if err := os.Rename(path, newpath); err != nil {
